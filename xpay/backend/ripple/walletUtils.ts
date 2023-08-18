@@ -8,7 +8,6 @@ import { IFundResults } from "./commonInterfaces";
 export const fundWallet = async (familySeed: string): Promise<IFundResults | null> => {
     console.log(XRPL_NETWORK);
     //    const test_wallet = xrpl.Wallet.fromSeed(familySeed)
-
     const client = new Client("wss://" + XRPL_NETWORK)
 
     console.log("1")

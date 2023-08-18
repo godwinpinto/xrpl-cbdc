@@ -17,7 +17,6 @@ const sha512_crypt_ts_1 = require("sha512-crypt-ts");
 const xrpl_1 = require("xrpl");
 const client_1 = require("@prisma/client");
 const walletUtils_1 = require("../ripple/walletUtils");
-const pixResolver_1 = require("../ripple/pixResolver");
 const prisma = new client_1.PrismaClient();
 const generator = new snowflake_uuid_1.Worker(0, 1, {
     workerIdBits: 5,
@@ -125,21 +124,16 @@ const sendMoney = (identifier, pixId, amount) => __awaiter(void 0, void 0, void 
         if (pixData) {
             const acData = yield (0, accountRepository_1.fetchXrplAccountByAccountId)(pixData.XAM_ROW_ID);
             if (acData) {
-                const destinationAccount = yield (0, pixResolver_1.getDestinationXrplAccountNo)(pixId);
-                if (destinationAccount) {
-                    const paymentStatus = (0, walletUtils_1.makePayment)(acData.SEED, destinationAccount, parseFloat(amount));
-                    return paymentStatus;
-                }
-                else {
-                    throw new Error("Invalid Destination Account");
-                }
+                //const acBalance=await walletBalance(acData.AC_NO)
+                const paymentStatus = (0, walletUtils_1.makePayment)(acData.SEED, "rPTPn2Pxx824YVzcjHvUeXx7V3wkCFP52a", parseFloat(amount));
+                return paymentStatus;
             }
             else {
-                throw new Error("Invalid Sender Account");
+                throw new Error("Invalid Account");
             }
         }
         else {
-            throw new Error("Invalid Sender Account");
+            throw new Error("Invalid Account");
         }
     }
     catch (e) {

@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model XPAY_ACCOUNT_MASTER {
+  XPAM_ROW_ID String   @id @db.Char(20)
+  XAM_ROW_ID  String   @db.Char(20)
+  PIX_ID      String   @unique(map: "PIX_ACCOUNT_MASTER_PIX_ID_IDX") @db.VarChar(25)
+  PIN         String   @db.VarChar(512)
+  ATTEMPTS    Int      @default(0)
+  ACTIVE      String   @default("Y") @db.Char(1)
+  CREATED_DT  DateTime @db.Timestamp(0)
+  CREATED_BY  String   @db.VarChar(50)
+  UPDATE_DT   DateTime @db.Timestamp(0)
+  UPDATE_BY   String   @db.VarChar(50)
+}
+
+model XRPL_ACCOUNT_MASTER {
+  XAM_ROW_ID String   @id @db.Char(20)
+  AC_NO      String   @unique(map: "XRPL_ACCOUNT_MASTER_UN") @db.VarChar(35)
+  SEED       String   @db.VarChar(100)
+  ACTIVE     String   @default("Y") @db.Char(1)
+  CREATED_DT DateTime @db.Timestamp(0)
+  CREATED_BY String   @db.VarChar(50)
+  UPDATED_DT String?  @db.VarChar(100)
+  UPDATED_BY String?  @db.VarChar(100)
+}
