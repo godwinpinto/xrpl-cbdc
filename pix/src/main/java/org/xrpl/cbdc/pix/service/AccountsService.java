@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.xrpl.cbdc.pix.component.GenerateUniqueId;
 import org.xrpl.cbdc.pix.component.PixRouteMasterRefreshConfig;
+import org.xrpl.cbdc.pix.json.PSPWrapper;
 import org.xrpl.cbdc.pix.json.RpayPixResponse;
 import reactor.core.publisher.Mono;
 
@@ -34,7 +35,11 @@ public class AccountsService {
                                 .header("Authorization", "Bearer MY_SECRET_TOKEN")
                                 .accept(MediaType.APPLICATION_JSON)
                                 .retrieve()
-                                .bodyToMono(RpayPixResponse.class)
+                                .bodyToMono(PSPWrapper.class)
+                                .flatMap(pspWrapper -> {
+                                    return Mono.just(pspWrapper.getResponse());
+                                })
+                                .log()
                                 .doOnError(error -> {
                                     log.error("error in Rpay call", error);
                                 })

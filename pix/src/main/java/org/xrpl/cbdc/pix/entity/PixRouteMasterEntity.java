@@ -25,7 +25,7 @@ public class PixRouteMasterEntity {
     private String cbdcCountryCode;
     @Column("RPAY_GATEWAY_DOMAIN")
     private String rGatewayDomain;
-    @Column("RPAY_GATEWAY_URL_PATH")
+    @Column("RPAY_GWATEWAY_URL_PATH")
     private String rpayGatewayUrlPath;
     @Column("ACTIVE")
     private String active;

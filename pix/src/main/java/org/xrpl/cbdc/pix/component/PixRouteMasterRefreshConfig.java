@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.xrpl.cbdc.pix.entity.PixRouteMasterEntity;
 import org.xrpl.cbdc.pix.repository.PixRouteMasterRepository;
 import org.xrpl.cbdc.pix.utils.ApplicationConstants;
+import org.xrpl.cbdc.pix.utils.ApplicationUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -19,10 +20,9 @@ public class PixRouteMasterRefreshConfig {
     @Autowired
     PixRouteMasterRepository pixRouteMasterRepository;
 
-    private ConcurrentHashMap<String, PixRouteMasterEntity> concurrentHashMap;
 
     public PixRouteMasterRefreshConfig(){
-        concurrentHashMap=new ConcurrentHashMap<>();
+
     }
 
     @Scheduled(initialDelay = 0L, fixedRate = 60*1000L)
@@ -30,10 +30,13 @@ public class PixRouteMasterRefreshConfig {
         log.info("Reloading");
         Flux<PixRouteMasterEntity> routes=pixRouteMasterRepository.findAll()
                 .flatMap(entity -> {
+                    System.out.println(entity.toString());
                     if(entity.getActive().equals(ApplicationConstants.ACTIVE)) {
-                        concurrentHashMap.put(entity.getRpayCode() + entity.getCbdcCountryCode(), entity);
+                        System.out.println("TRUE AGAIN");
+                        ApplicationUtils.ROUTE_MAP.put(entity.getRpayCode() + entity.getCbdcCountryCode(), entity);
                     }else{
-                        concurrentHashMap.remove(entity.getRpayCode() + entity.getCbdcCountryCode());
+                        System.out.println("FALSE AGAIN");
+                        ApplicationUtils.ROUTE_MAP.remove(entity.getRpayCode() + entity.getCbdcCountryCode());
                     }
                     return Mono.just(entity);
         });
@@ -41,9 +44,12 @@ public class PixRouteMasterRefreshConfig {
     }
 
     public Mono<PixRouteMasterEntity> getRoute(String rpayCode,String cbdcCountryCode){
-        if(concurrentHashMap!=null && !concurrentHashMap.isEmpty() && concurrentHashMap.contains(rpayCode.trim()+cbdcCountryCode.trim())) {
-            return Mono.just(concurrentHashMap.get(rpayCode.trim() + cbdcCountryCode.trim()));
+        System.out.println(rpayCode.trim()+cbdcCountryCode.trim());
+        if(ApplicationUtils.ROUTE_MAP!=null && !ApplicationUtils.ROUTE_MAP.isEmpty() && ApplicationUtils.ROUTE_MAP.get(rpayCode.trim()+cbdcCountryCode.trim())!=null) {
+            System.out.println("TRUE");
+            return Mono.just(ApplicationUtils.ROUTE_MAP.get(rpayCode.trim() + cbdcCountryCode.trim()));
         }else {
+            System.out.println("FALSE");
             return Mono.empty();
         }
     }
