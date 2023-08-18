@@ -38,11 +38,11 @@ public class AccountsService {
                                 .doOnError(error -> {
                                     log.error("error in Rpay call", error);
                                 })
-                                .onErrorReturn(RpayPixResponse.builder().xrplAccountNo("0").build());
+                                .onErrorReturn(RpayPixResponse.builder().xrplAccountNo("0").pixId(pixId).currency("").build());
                     } catch (URISyntaxException e) {
-                        return Mono.just(RpayPixResponse.builder().xrplAccountNo("0").build());
+                        return Mono.just(RpayPixResponse.builder().xrplAccountNo("0").pixId(pixId).currency("").build());
                     }
-                }).switchIfEmpty(Mono.just(RpayPixResponse.builder().xrplAccountNo("0").build()))
-                .onErrorReturn(RpayPixResponse.builder().xrplAccountNo("0").build());
+                }).switchIfEmpty(Mono.just(RpayPixResponse.builder().xrplAccountNo("0").pixId(pixId).currency("").build()))
+                .onErrorReturn(RpayPixResponse.builder().xrplAccountNo("0").pixId(pixId).currency("").build());
     }
 }

@@ -23,4 +23,6 @@ public class RpayPixResponse {
     @JsonProperty("additional_data")
     private Object additionalData;
 
+    @JsonProperty("pix_id")
+    private Object pixId;
 }
