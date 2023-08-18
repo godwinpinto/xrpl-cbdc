@@ -1,0 +1,19 @@
+xrpl:
+  url: ${xrpl_network}
+
+pix:
+  instance-id: ${instance-id}
+  dummy-ledger: ${dummy-ledger}
+
+spring:
+  r2dbc:
+    url: ${jdbc_url}
+    username: ${jdbc_user}
+    password: ${jdbc_password}
+    properties:
+      sslMode: REQUIRED
+    pool:
+      initial-size: 1
+      max-size: 30
+      max-idle-time: 15m
+      validation-query: SELECT 1
