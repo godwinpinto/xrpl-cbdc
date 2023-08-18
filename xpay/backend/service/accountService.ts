@@ -50,7 +50,7 @@ export const registerUser = async (identifier: string, pin: string):Promise<IFun
                 UPDATE_BY: "SYSTEM"
             }
 
-            const transactionStatus:boolean=await prisma.$transaction(async (tx) => {
+            const transactionStatus:boolean=await prisma.$transaction(async (tx:any) => {
                 await createXrplAccount(xrplAccountEntity, tx);
                 await createPixId(rPayAccountEntity, tx);
                 return true;
