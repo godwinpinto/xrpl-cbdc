@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import accountController from './controller/accountController';
+import pixController from './controller/pixController';
 dotenv.config();
 
 const app: Express = express();
@@ -10,6 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/account', accountController);
 
+app.use('/pix', pixController);
 
 app.get('/', (req: Request, res: Response) => {
 
