@@ -10,10 +10,10 @@ COPY package*.json ./
 # Install project dependencies
 RUN npm install
 
-RUN npx prisma generate
-
 # Copy the rest of the application code to the container
 COPY . .
+
+RUN npx prisma generate
 
 # Build the TypeScript code
 RUN npm run build
