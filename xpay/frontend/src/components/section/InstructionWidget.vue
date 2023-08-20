@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 const userStore = useUserStore();
 const { senderAccountInfo, receiverAccountInfo } = storeToRefs(userStore)
 
-const { generateAccountDetails }  = useUserStore();
+const { sendMessage }  = useUserStore();
 </script>
 <template>
     <div>
@@ -62,20 +62,20 @@ const { generateAccountDetails }  = useUserStore();
                 Register: REG &lt;4 DIGIT NUMERIC PIN&gt; &lt;AC NO(optional)&gt;
                 <br/>Note: If account number is not entered a new account is created and mapped to mobile number as PIX
             </article>
-                <button class="btn btn-accent btn-sm justify-center w-full" @click="generateAccountDetails" disabled>REG 1234</button>
+                <button class="btn btn-accent btn-sm justify-center w-full" @click="sendMessage('REG 1234','9999999999')" disabled>REG 1234</button>
             </div>
 
             <div class="content-center col-span-3">
                 <article class="prose text-sm pt-4 col-span-2">
                 Balance Enguiry: BAL &lt;PIN&gt;
             </article>
-                <button class="btn btn-accent btn-sm justify-center w-full" @click="generateAccountDetails">BAL 1234</button>
+                <button class="btn btn-accent btn-sm justify-center w-full" @click="sendMessage('BAL 1234','9999999999')">BAL 1234</button>
             </div>
             <div class="content-center col-span-3">
                 <article class="prose text-sm pt-4 col-span-2">
                 Transaction: SEND &lt;AMOUNT&gt; &lt;PIX_ID / AC_NO&gt; &lt;PIN&gt; 
             </article>
-                <button class="btn btn-accent btn-sm justify-center w-full" @click="generateAccountDetails">SEND 2 88888888@yobank.in 1234</button>
+                <button class="btn btn-accent btn-sm justify-center w-full" @click="sendMessage('SEND 2 8888888888@yobank.in 1234','9999999999')">SEND 2 88888888@yobank.in 1234</button>
             </div>
 
         </div>

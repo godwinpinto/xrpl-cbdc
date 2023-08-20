@@ -1,20 +1,20 @@
 import axios from 'axios';
 
 
-export const sendMessageAPI = async (data: any, channel: string, event: string) => {
+export const sendMessageAPI = async (message_text: string,mobile_number:string):Promise<string> => {
     const payload = {
-        data: JSON.stringify(data),
-        channel: channel,
-        event: event
+        message_text: message_text,
+        mobile_number:mobile_number
     };
     const headers = {
         'Content-Type': 'application/json',
     };
     const url = '/api/send_message';
-    axios.post(url, payload, { headers })
-        .then((response: any) => {
-        })
-        .catch((error: any) => {
-            console.error('Error sending event:', error);
-        });
+    try {
+        const response = await axios.post(url, payload, { headers });
+        return response.data.message; 
+    } catch (error) {
+        console.error('Error sending event:', error);
+        throw error;
+    }
 }
