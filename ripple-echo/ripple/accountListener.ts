@@ -64,7 +64,7 @@ export const startListeningAccounts = async () => {
         // Fill this out with your handlers in the following format:
         // "type": function(event) { /* handle event of this type */ }
     }
-    socket.addEventListener('message', (event) => {
+    socket.addEventListener('message', (event:any) => {
         const parsed_data = JSON.parse(event.data)
         if (WS_HANDLERS.hasOwnProperty(parsed_data.type)) {
             // Call the mapped handler

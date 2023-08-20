@@ -9,11 +9,11 @@ const prisma = new PrismaClient()
     return result;
 } */
 
-export const fetchXrplAccountByAccountId = async (accountId: string):Promise<any> => {
+/* export const fetchXrplAccountByAccountId = async (accountId: string):Promise<any> => {
     const result = await prisma.xRPL_ACCOUNT_MASTER.findFirst({
         where: { XAM_ROW_ID: accountId }
     })
     console.log("fetch", result);
     return result;
-}
+} */
 

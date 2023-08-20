@@ -7,12 +7,14 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const echoController_1 = __importDefault(require("./controller/echoController"));
 const accountListener_1 = require("./ripple/accountListener");
+const notificationController_1 = __importDefault(require("./controller/notificationController"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT;
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
 app.use('/send', echoController_1.default);
+app.use('/notification', notificationController_1.default);
 app.get('/', (req, res) => {
     res.send('Ripple PSP API is running');
 });

@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import pixController from './controller/echoController';
 import { startListeningAccounts } from './ripple/accountListener';
+import notificationController from './controller/notificationController';
 dotenv.config();
 
 const app: Express = express();
@@ -11,6 +12,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use('/send', pixController);
+
+
+app.use('/notification', notificationController);
+
 
 app.get('/', (req: Request, res: Response) => {
 
