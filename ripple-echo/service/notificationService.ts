@@ -1,10 +1,12 @@
-import { createChannelMaster } from '../repository/notificationRepository'
-import { fetchRpayByPixId } from '../repository/rpayRepository'
-import { PrismaClient } from '@prisma/client'
+import { createChannelMaster, fetchAccountsByDeviceId } from '../repository/notificationRepository'
 import { PixResponse } from '../ripple/commonInterfaces';
+import { getLast10Transactions, walletBalance } from '../ripple/walletUtils';
 import { RegisterNotificationInput, addMonths } from '../utils/constants';
 import type { XRPL_USER_CHANNEL_MASTER } from '@prisma/client'
 import { Worker } from 'snowflake-uuid';
+import jsonpath from "jsonpath";
+import { dropsToXrp } from "xrpl";
+
 
 const generator = new Worker(0, 1, {
     workerIdBits: 5,
@@ -36,6 +38,44 @@ export const registerChannel = async (registerNotificationInput: RegisterNotific
         const result = await createChannelMaster(dbObject);
         return parseInt(rowId);
     } catch (e: any) {
+        throw new Error(e.message || "Unknown error")
+    }
+}
+
+export const getAccountDetails = async (origin_id: string): Promise<any> => {
+    try {
+        const result = await fetchAccountsByDeviceId(origin_id);
+        console.log("result", result)
+
+
+        const result1 = await walletBalance(result.XRPL_AC_NO);
+        const balance = jsonpath.query(result1, '$.result.account_data.Balance')[0];
+        console.log("result1", balance)
+
+
+        const result3 = await getLast10Transactions(result.XRPL_AC_NO);
+        console.log("result3", result3)
+        const transactions: Array<any> = result3.result.transactions;
+        const transactionsOutput: Array<any> = new Array();
+        for (let i = 0; i < transactions.length; i++) {
+            const from = jsonpath.query(transactions[i], '$.tx.Account')[0];
+            const amount = dropsToXrp(jsonpath.query(transactions[i], '$.tx.Amount')[0]);
+            const date = jsonpath.query(transactions[i], '$.tx.date')[0];
+            var d = new Date(0);
+            d.setUTCSeconds(date);
+            transactionsOutput.push({
+                from, amount, date: d.toUTCString()
+            })
+        }
+
+        const response = {
+            account: result.XRPL_AC_NO,
+            balance: dropsToXrp(balance),
+            txn: transactionsOutput
+        }
+        return response;
+    } catch (e: any) {
+        console.log("here")
         throw new Error(e.message || "Unknown error")
     }
 }

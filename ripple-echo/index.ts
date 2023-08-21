@@ -23,13 +23,13 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 
-setInterval(() => {
+/* setInterval(() => {
   // Your background process logic here
   console.log('Background process is running...');
   startListeningAccounts();
 }, 60000); // 5000 milliseconds = 5 seconds
-
-  startListeningAccounts();
+ */
+/*   startListeningAccounts(); */
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);

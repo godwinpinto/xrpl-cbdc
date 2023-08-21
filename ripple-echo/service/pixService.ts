@@ -1,10 +1,8 @@
-import { fetchXrplAccountByAccountId } from '../repository/accountRepository'
-import { fetchRpayByPixId } from '../repository/rpayRepository'
 import { PrismaClient } from '@prisma/client'
 import { PixResponse } from '../ripple/commonInterfaces';
 const prisma = new PrismaClient()
 
-export const getPixDetails = async (pixId: string): Promise<PixResponse> => {
+/* export const getPixDetails = async (pixId: string): Promise<PixResponse> => {
 
     try {
         const pixData = await fetchRpayByPixId(pixId);
@@ -27,3 +25,4 @@ export const getPixDetails = async (pixId: string): Promise<PixResponse> => {
     }
 }
 
+ */

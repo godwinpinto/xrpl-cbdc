@@ -1,7 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { GenericResponse } from '../exception/responseJson';
-import { getPixDetails } from '../service/pixService';
 import { PixResponse } from '../ripple/commonInterfaces';
 import { admin } from '../utils/firebaseConfig'
 

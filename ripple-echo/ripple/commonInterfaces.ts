@@ -6,3 +6,8 @@ export interface PixResponse{
     currency_accepted?:string;
     additional_data?:string;
 }
+
+export interface IFundResults{
+    wallet: Wallet;
+    balance: number;
+}

@@ -8,7 +8,7 @@ const prisma = new PrismaClient()
     console.log("create pix", result)
 }
  */
-export const fetchRpayByPixId = async (pixId: string): Promise<any> => {
+/* export const fetchRpayByPixId = async (pixId: string): Promise<any> => {
     try {
         const result = await prisma.xPAY_ACCOUNT_MASTER.findFirst({
             where: { PIX_ID: pixId }
@@ -20,3 +20,4 @@ export const fetchRpayByPixId = async (pixId: string): Promise<any> => {
     }
 }
 
+ */

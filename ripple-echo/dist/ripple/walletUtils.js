@@ -9,38 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.makePayment = exports.walletBalance = exports.fundWallet = void 0;
+exports.getLast10Transactions = exports.walletBalance = void 0;
 const xrpl_1 = require("xrpl");
 const constants_1 = require("../utils/constants");
-const fundWallet = (familySeed) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(constants_1.XRPL_NETWORK);
-    //    const test_wallet = xrpl.Wallet.fromSeed(familySeed)
-    const client = new xrpl_1.Client("wss://" + constants_1.XRPL_NETWORK);
-    console.log("1");
-    let results;
-    try {
-        yield client.connect();
-        const newWallet = xrpl_1.Wallet.fromSeed(familySeed);
-        console.log("2");
-        const fund_result = yield client.fundWallet(newWallet);
-        console.log("fund_result", fund_result);
-        results = fund_result;
-        return results;
-    }
-    catch (e) {
-        console.log(e);
-    }
-    finally {
-        try {
-            client.disconnect();
-        }
-        catch (e) {
-            //console.log("disconnect", e)
-        }
-    }
-    return null;
-});
-exports.fundWallet = fundWallet;
 const walletBalance = (walletAddress) => __awaiter(void 0, void 0, void 0, function* () {
     const client = new xrpl_1.Client("wss://" + constants_1.XRPL_NETWORK);
     let results;
@@ -70,26 +41,25 @@ const walletBalance = (walletAddress) => __awaiter(void 0, void 0, void 0, funct
     return null;
 });
 exports.walletBalance = walletBalance;
-const makePayment = (familySeed, destinationAddress, amount) => __awaiter(void 0, void 0, void 0, function* () {
+const getLast10Transactions = (walletAddress) => __awaiter(void 0, void 0, void 0, function* () {
     const client = new xrpl_1.Client("wss://" + constants_1.XRPL_NETWORK);
+    let results;
     try {
-        const sourceWallet = xrpl_1.Wallet.fromSeed(familySeed);
         yield client.connect();
-        const prepareTransaction = yield client.autofill({
-            TransactionType: "Payment",
-            Account: sourceWallet.address,
-            Amount: (0, xrpl_1.xrpToDrops)(amount),
-            Destination: destinationAddress
-        });
-        console.log("Submitting the transaction (Takes 3-5 seconds)");
-        const submitted_tx = yield client.submitAndWait(prepareTransaction, {
-            autofill: true,
-            wallet: sourceWallet
-        });
-        if (submitted_tx) {
-            console.log("Transaction result:", submitted_tx);
-            return submitted_tx;
-        }
+        console.log("2");
+        const command = {
+            id: 1,
+            account: walletAddress,
+            command: "account_tx",
+            "ledger_index_min": -1,
+            "ledger_index_max": -1,
+            "binary": false,
+            "limit": 5,
+            "forward": false
+        };
+        const history_result = yield client.request(command);
+        console.log("history_result", history_result);
+        return history_result;
     }
     catch (e) {
         console.log(e);
@@ -104,4 +74,4 @@ const makePayment = (familySeed, destinationAddress, amount) => __awaiter(void 0
     }
     return null;
 });
-exports.makePayment = makePayment;
+exports.getLast10Transactions = getLast10Transactions;

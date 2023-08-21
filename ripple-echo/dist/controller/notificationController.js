@@ -34,4 +34,20 @@ router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
     res.json({ response });
 }));
+router.post('/dashboard', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = {};
+    const { origin_id } = req.body;
+    try {
+        const result = yield (0, notificationService_1.getAccountDetails)(origin_id);
+        response.status = 200;
+        response.data = {
+            result
+        };
+    }
+    catch (e) {
+        response.status = 300;
+        response.msg = e.message || "Unknown error";
+    }
+    res.json({ response });
+}));
 exports.default = router;

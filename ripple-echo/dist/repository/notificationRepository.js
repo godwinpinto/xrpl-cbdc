@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchAccounts = exports.createChannelMaster = void 0;
+exports.fetchAccountsByDeviceId = exports.fetchAccounts = exports.createChannelMaster = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const createChannelMaster = (createInput) => __awaiter(void 0, void 0, void 0, function* () {
@@ -30,3 +30,12 @@ const fetchAccounts = () => __awaiter(void 0, void 0, void 0, function* () {
     return result;
 });
 exports.fetchAccounts = fetchAccounts;
+const fetchAccountsByDeviceId = (origin_id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield prisma.xRPL_USER_CHANNEL_MASTER.findFirst({
+        where: { ORIGIN_ID: origin_id },
+        select: { XRPL_AC_NO: true }
+    });
+    console.log("fetch", result);
+    return result;
+});
+exports.fetchAccountsByDeviceId = fetchAccountsByDeviceId;
