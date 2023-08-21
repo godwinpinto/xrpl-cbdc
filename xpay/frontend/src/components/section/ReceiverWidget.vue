@@ -85,6 +85,11 @@ channel.bind(receiverAccountInfo.value.xrpl_acccount_no, function (data: any) {
         </div>
 
     </div>
+    <div class="justify-center items-center">
+            <article class="prose dark:prose-invert pl-7">
+                Notifications. Powered by Ripple Echo.
+            </article>
+        </div>
 </template>
 <style>
 .chat-bubble {

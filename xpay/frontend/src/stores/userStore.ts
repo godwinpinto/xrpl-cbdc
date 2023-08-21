@@ -14,13 +14,13 @@ export const useUserStore = defineStore('userStore', () => {
   const senderAccountInfo = ref({
     mobile_number: "9999999999",
     xrpl_acccount_no: "rpTcQAvKAZmrU6bwf1FP2rMLKqziRcRPU6",
-    pix_id: "9999999999"
+    pix_id: "9999999999@yobank.in"
   })
 
   const receiverAccountInfo = ref({
     mobile_number: "8888888888",
     xrpl_acccount_no: "rDKH6NniQpqoAJNBh4bTf7y9rXigwkyZHa",
-    pix_id: "9999999999"
+    pix_id: "8888888888@yobank.in"
   })
 
   const sendMessage = async (message: string, mobile_number: string) => {

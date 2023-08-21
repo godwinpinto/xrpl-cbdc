@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model XRPL_USER_CHANNEL_MASTER {
+  XUCM_ROW_ID             String   @id @db.Char(20)
+  XRPL_AC_NO              String   @db.VarChar(35)
+  ORIGIN_ID               String   @db.VarChar(512)
+  ORIGIN_ADD_DETAILS      String   @db.VarChar(500)
+  CONTACT_ID              String   @db.VarChar(250)
+  CONTACT_TYPE            String   @db.VarChar(3)
+  TRANSACTIONS_SUBSCRIBED String   @db.VarChar(500)
+  ACTIVE                  String   @default("Y") @db.Char(1)
+  CREATED_DT              DateTime @db.Timestamp(0)
+  CREATED_BY              String   @db.VarChar(50)
+  UPDATED_DT              DateTime @db.Timestamp(0)
+  UPDATED_BY              String   @db.VarChar(100)
+  MSG_META_INFO           String?  @db.VarChar(100)
+  SUB_EXPIRY_DT           DateTime @db.Timestamp(0)
+
+  @@index([XRPL_AC_NO], map: "XRPL_USER_CHANNEL_MASTER_XRPL_AC_NO_IDX")
+}
+
+model RECHO_MSG_MASTER {
+  RMM_ROW_ID            String @id @db.Char(20)
+  XRPL_TRANSACTION_TYPE String @db.VarChar(50)
+  CHANNEL_TYPE          String @db.VarChar(50)
+  MSG_CODE              String @db.VarChar(50)
+  MSG_LANG              String @db.VarChar(10)
+  MSG_DISPLAY_TITLE     String @db.VarChar(50)
+  MSG_DISPLAY_BODY      String @db.VarChar(150)
+  MSG_SPEAK_BODY        String @db.VarChar(200)
+}

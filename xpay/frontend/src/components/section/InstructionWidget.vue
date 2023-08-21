@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 const userStore = useUserStore();
 const { senderAccountInfo, receiverAccountInfo } = storeToRefs(userStore)
 
-const { sendMessage }  = useUserStore();
+const { sendMessage } = useUserStore();
 </script>
 <template>
     <div>
@@ -59,25 +59,34 @@ const { sendMessage }  = useUserStore();
             <div class="col-span-3 divider font-extrabold text-blue-700">Actions (Click on any below button to act)</div>
             <div class="content-center col-span-3">
                 <article class="prose text-sm pt-4 col-span-2">
-                Register: REG &lt;4 DIGIT NUMERIC PIN&gt; &lt;AC NO(optional)&gt;
-                <br/>Note: If account number is not entered a new account is created and mapped to mobile number as PIX
-            </article>
-                <button class="btn btn-accent btn-sm justify-center w-full" @click="sendMessage('REG 1234','9999999999')" disabled>REG 1234</button>
+                    Register: REG &lt;4 DIGIT NUMERIC PIN&gt; &lt;AC NO(optional)&gt;
+                    <br />Note: If account number is not entered a new account is created and mapped to mobile number as PIX
+                </article>
+                <button class="btn btn-accent btn-sm justify-center w-full" @click="sendMessage('REG 1234', '9999999999')"
+                    disabled>REG 1234</button>
             </div>
 
             <div class="content-center col-span-3">
                 <article class="prose text-sm pt-4 col-span-2">
-                Balance Enguiry: BAL &lt;PIN&gt;
-            </article>
-                <button class="btn btn-accent btn-sm justify-center w-full" @click="sendMessage('BAL 1234','9999999999')">BAL 1234</button>
+                    Balance Enguiry: BAL &lt;PIN&gt;
+                </article>
+                <button class="btn btn-accent btn-sm justify-center w-full"
+                    @click="sendMessage('BAL 1234', '9999999999')">BAL 1234</button>
             </div>
             <div class="content-center col-span-3">
                 <article class="prose text-sm pt-4 col-span-2">
-                Transaction: SEND &lt;AMOUNT&gt; &lt;PIX_ID / AC_NO&gt; &lt;PIN&gt; 
-            </article>
-                <button class="btn btn-accent btn-sm justify-center w-full" @click="sendMessage('SEND 2 8888888888@yobank.in 1234','9999999999')">SEND 2 88888888@yobank.in 1234</button>
+                    Transaction: SEND &lt;AMOUNT&gt; &lt;PIX_ID / AC_NO&gt; &lt;PIN&gt;
+                </article>
+                <button class="btn btn-accent btn-sm justify-center w-full"
+                    @click="sendMessage('SEND 2 8888888888@yobank.in 1234', '9999999999')">SEND 2 88888888@yobank.in
+                    1234</button>
             </div>
 
         </div>
     </div>
 </template>
+<style>
+.divider {
+    height: 0rem
+}
+</style>
