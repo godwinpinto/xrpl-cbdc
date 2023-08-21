@@ -2,7 +2,7 @@
 import type { UserInfo } from '@/stores/userStore';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia'
-import { onMount, ref } from "vue";
+import { onMount, ref,inject } from "vue";
 import { fetchTransactions } from '@/service/appServices.ts';
 
 const userStore = useUserStore();
@@ -18,17 +18,39 @@ interface ITransactions {
 }
 const transactionsArray = ref<Array<ITransactions>>([]);
 
-    const balance=ref("");
-    const account=ref("");
+const balance = ref("");
+const account = ref("");
+
+const pusher: any = inject('pusher');
+var channel = pusher.subscribe(import.meta.env.VITE_PUSHER_APP_CHANNEL);
+
+
+channel.bind(userInfo.value.email, function (data: any) {
+    console.log("data", data);
+    fetchBalanceAndTransactions();
+    speak("Hello World")
+/*
+ */
+});
+
 
 const fetchBalanceAndTransactions = async () => {
     const response = await fetchTransactions(userInfo.value.email);
-    if(response.status==200 && response.data.response.data && response.data.response.data.result){
-        balance.value=response.data.response.data.result.balance;
-        account.value=response.data.response.data.result.account;
-        transactionsArray.value=response.data.response.data.result.txn as Array<ITransactions>;
+    if (response.status == 200 && response.data.response.data && response.data.response.data.result) {
+        balance.value = response.data.response.data.result.balance;
+        account.value = response.data.response.data.result.account;
+        transactionsArray.value = response.data.response.data.result.txn as Array<ITransactions>;
     }
 }
+
+function speak(text:string) {
+
+    let utterance = new SpeechSynthesisUtterance(text);
+speechSynthesis.speak(utterance);
+
+ 
+}
+
 
 fetchBalanceAndTransactions();
 </script>
@@ -39,12 +61,13 @@ fetchBalanceAndTransactions();
             <div class="w-full flex justify-between">
                 <div>
                     <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">Your account balance</h3>
-                    <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">XRP {{ balance }}</span>
+                    <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">XRP {{ balance
+                    }}</span>
                     <p class="flex items-center text-base font-normal text-gray-500 dark:text-gray-400">
-            <span class="flex items-center mr-1.5 text-sm text-green-500 dark:text-green-400">
-              {{ account }}
-            </span>
-          </p>
+                        <span class="flex items-center mr-1.5 text-sm text-green-500 dark:text-green-400">
+                            {{ account }}
+                        </span>
+                    </p>
                 </div>
                 <div><button @click="signOut"
                         class="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-red-200 via-red-300 to-yellow-200 group-hover:from-red-200 group-hover:via-red-300 group-hover:to-yellow-200 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-red-100 dark:focus:ring-red-400">
@@ -77,6 +100,7 @@ fetchBalanceAndTransactions();
                     </div>
                 </div>
             </li>
-    </ul>
-    </div></template>
+        </ul>
+    </div>
+</template>
     

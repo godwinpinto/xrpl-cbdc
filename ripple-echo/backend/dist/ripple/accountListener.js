@@ -16,6 +16,7 @@ exports.doSubscribe = exports.startListeningAccounts = void 0;
 const constants_1 = require("../utils/constants");
 const ws_1 = __importDefault(require("ws"));
 const notificationRepository_1 = require("../repository/notificationRepository");
+const channelService_1 = require("../service/channelService");
 let socket;
 const AWAITING = {};
 let autoid_n = 0;
@@ -24,8 +25,6 @@ const startListeningAccounts = () => __awaiter(void 0, void 0, void 0, function*
     const subscribers = yield (0, notificationRepository_1.fetchDistinctAccounts)();
     const accountArray = subscribers.map((item) => item.XRPL_AC_NO).filter((account) => account.startsWith('r'));
     console.log(accountArray);
-    if (true)
-        return;
     console.log(constants_1.XRPL_NETWORK);
     socket.addEventListener('close', (event) => {
         console.log('Disconnected...');
@@ -48,6 +47,7 @@ const startListeningAccounts = () => __awaiter(void 0, void 0, void 0, function*
     };
     socket.addEventListener('message', (event) => {
         console.log('Got message from server:', event.data);
+        (0, channelService_1.processNotification)(event);
         const parsed_data = JSON.parse(event.data);
         if (WS_HANDLERS.hasOwnProperty(parsed_data.type)) {
             WS_HANDLERS[parsed_data.type](parsed_data);

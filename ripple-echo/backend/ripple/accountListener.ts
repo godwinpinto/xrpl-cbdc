@@ -2,6 +2,7 @@ import xrpl, { AccountInfoRequest, Client, Wallet, xrpToDrops } from "xrpl";
 import { XRPL_NETWORK } from '../utils/constants'
 import WebSocket from 'ws'
 import { fetchDistinctAccounts } from "../repository/notificationRepository";
+import { processNotification } from "../service/channelService";
 
 let socket: WebSocket;
 
@@ -16,8 +17,6 @@ export const startListeningAccounts = async () => {
     const subscribers = await fetchDistinctAccounts();
     const accountArray = subscribers.map((item: any) => item.XRPL_AC_NO).filter((account: any) => account.startsWith('r'));
     console.log(accountArray)
-    if (true)
-        return
     console.log(XRPL_NETWORK);
     socket.addEventListener('close', (event: any) => {
         console.log('Disconnected...')
@@ -41,6 +40,7 @@ export const startListeningAccounts = async () => {
     }
     socket.addEventListener('message', (event: any) => {
         console.log('Got message from server:', event.data)
+        processNotification(event);
         const parsed_data = JSON.parse(event.data)
         if (WS_HANDLERS.hasOwnProperty(parsed_data.type)) {
             WS_HANDLERS[parsed_data.type](parsed_data)

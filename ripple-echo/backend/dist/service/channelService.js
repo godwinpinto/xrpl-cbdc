@@ -17,22 +17,30 @@ const jsonpath_1 = __importDefault(require("jsonpath"));
 const notificationRepository_1 = require("../repository/notificationRepository");
 const sendWebNotification_1 = require("../ripple/sendWebNotification");
 const processNotification = (event) => __awaiter(void 0, void 0, void 0, function* () {
-    const transactionType = jsonpath_1.default.query(event.data, '$.result.TransactionType')[0];
-    if (transactionType == "Payment") {
-        const recepientAccountNo = jsonpath_1.default.query(event.data, '$.result.Destination')[0];
-        const devices = yield (0, notificationRepository_1.fetchAccountsByAccountNo)(recepientAccountNo);
-        //        sendFcmNotification(event.data, devices[0])
-        (0, sendWebNotification_1.sendWebNotification)(event.data);
-        /*        for(const device of devices){
-                    if(device.CONTACT_TYPE=="WEB"){
-                        //web push
-                        sendWebNotification(event.data);
-                    }else if(device.CONTACT_TYPE=="NOT"){
-                        //FCM push notification
-                        sendWebNotification(event.data);
-                    }
+    try {
+        console.log("event.data", event.data);
+        const jsonData = JSON.parse(event.data);
+        const transactionType = jsonpath_1.default.query(jsonData, '$.transaction.TransactionType')[0];
+        console.log("transactionType", transactionType);
+        if (transactionType == "Payment") {
+            const recepientAccountNo = jsonpath_1.default.query(jsonData, '$.transaction.Destination')[0];
+            const devices = yield (0, notificationRepository_1.fetchAccountsByAccountNo)(recepientAccountNo);
+            //        sendFcmNotification(event.data, devices[0])
+            console.log("devices", devices);
+            for (const device of devices) {
+                (0, sendWebNotification_1.sendWebNotification)(event.data, device.ORIGIN_ID);
+                /*             if(device.CONTACT_TYPE=="WEB"){
+                    //web push
+                    sendWebNotification(event.data);
+                }else if(device.CONTACT_TYPE=="NOT"){
+                    //FCM push notification
+                    sendWebNotification(event.data);
                 }
-         */
+     */ }
+        }
+    }
+    catch (e) {
+        console.log(e);
     }
 });
 exports.processNotification = processNotification;
