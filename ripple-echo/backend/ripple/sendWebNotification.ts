@@ -31,6 +31,4 @@ export const sendWebNotification = async (eventData: any,destination:string): Pr
     }else{
         console.log("something was not right")
     }
-
-
 }
