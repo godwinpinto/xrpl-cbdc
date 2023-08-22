@@ -28,7 +28,7 @@ var channel = pusher.subscribe(import.meta.env.VITE_PUSHER_APP_CHANNEL);
 channel.bind(userInfo.value.email, function (data: any) {
     console.log("data", data);
     fetchBalanceAndTransactions();
-    speak("Hello World")
+    speak(data.message as string)
 /*
  */
 });
@@ -44,14 +44,12 @@ const fetchBalanceAndTransactions = async () => {
 }
 
 function speak(text:string) {
-
+console.log(text)
+window.speechSynthesis.cancel();
     let utterance = new SpeechSynthesisUtterance(text);
 speechSynthesis.speak(utterance);
-
  
 }
-
-
 fetchBalanceAndTransactions();
 </script>
 <template>
