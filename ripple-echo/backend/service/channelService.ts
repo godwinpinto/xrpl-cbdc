@@ -16,7 +16,7 @@ try{
 //        sendFcmNotification(event.data, devices[0])
 console.log("devices",devices)
         for(const device of devices){
-            sendWebNotification(event.data,device.ORIGIN_ID);
+            sendWebNotification(event.data,device.ORIGIN_ID,device.MSG_META_INFO);
 
             /*             if(device.CONTACT_TYPE=="WEB"){
                 //web push

@@ -3,7 +3,7 @@ import jsonpath from "jsonpath";
 import { dropsToXrp } from "xrpl";
 
 
-export const sendWebNotification = async (eventData: any,destination:string): Promise<void> => {
+export const sendWebNotification = async (eventData: any,destination:string,metaInfo:any): Promise<void> => {
     console.log("destination",destination)
     const jsonData = JSON.parse(eventData);
     const transactionResult = jsonpath.query(jsonData, '$.engine_result')[0];
@@ -13,7 +13,7 @@ export const sendWebNotification = async (eventData: any,destination:string): Pr
     const transactionAmount = jsonpath.query(jsonData, '$.transaction.Amount')[0];
 
     if(validated==true && transactionResult=="tesSUCCESS" && type=="transaction"){
-        const messageText="You have received "+dropsToXrp(transactionAmount) +" XRP on RippleEcho";
+        const messageText=dropsToXrp(transactionAmount);
         console.log(process.env.ACCOUNT_NO,process.env.PUSHER_CHANNEL)
         console.log(messageText)
         const pusher = new Pusher({
@@ -25,7 +25,8 @@ export const sendWebNotification = async (eventData: any,destination:string): Pr
         });
     
         pusher.trigger(process.env.PUSHER_CHANNEL || '', destination || '', {
-            message: messageText
+            message: messageText,
+            meta:metaInfo
         });
     
     }else{
