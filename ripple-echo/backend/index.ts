@@ -3,11 +3,14 @@ import dotenv from 'dotenv';
 import pixController from './controller/echoController';
 import { startListeningAccounts } from './ripple/accountListener';
 import notificationController from './controller/notificationController';
+import cors from 'cors'
+
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
 
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -18,7 +21,7 @@ app.use('/notification', notificationController);
 
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Ripple PSP API is running');
+  res.send('Ripple Echo Box API is running');
 });
 
 
