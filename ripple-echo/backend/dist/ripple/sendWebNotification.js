@@ -16,7 +16,7 @@ exports.sendWebNotification = void 0;
 const pusher_1 = __importDefault(require("pusher"));
 const jsonpath_1 = __importDefault(require("jsonpath"));
 const xrpl_1 = require("xrpl");
-const sendWebNotification = (eventData, destination) => __awaiter(void 0, void 0, void 0, function* () {
+const sendWebNotification = (eventData, destination, metaInfo) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("destination", destination);
     const jsonData = JSON.parse(eventData);
     const transactionResult = jsonpath_1.default.query(jsonData, '$.engine_result')[0];
@@ -25,7 +25,7 @@ const sendWebNotification = (eventData, destination) => __awaiter(void 0, void 0
     const balance = jsonpath_1.default.query(jsonData, '$.meta.AffectedNodes[0].ModifiedNode.FinalFields.Balance')[0];
     const transactionAmount = jsonpath_1.default.query(jsonData, '$.transaction.Amount')[0];
     if (validated == true && transactionResult == "tesSUCCESS" && type == "transaction") {
-        const messageText = "You have received " + (0, xrpl_1.dropsToXrp)(transactionAmount) + " XRP on RippleEcho";
+        const messageText = (0, xrpl_1.dropsToXrp)(transactionAmount);
         console.log(process.env.ACCOUNT_NO, process.env.PUSHER_CHANNEL);
         console.log(messageText);
         const pusher = new pusher_1.default({
@@ -36,7 +36,8 @@ const sendWebNotification = (eventData, destination) => __awaiter(void 0, void 0
             useTLS: true
         });
         pusher.trigger(process.env.PUSHER_CHANNEL || '', destination || '', {
-            message: messageText
+            message: messageText,
+            meta: metaInfo
         });
     }
     else {

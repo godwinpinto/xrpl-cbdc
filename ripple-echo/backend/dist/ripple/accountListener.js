@@ -101,9 +101,10 @@ const pingpong = () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield api_request({ command: "ping" });
     console.log("Pong!", response);
 });
-setInterval(function () {
-    pingpong();
+/* setInterval(function () {
+    pingpong()
     if (socket.readyState == socket.OPEN) {
         socket.close();
     }
 }, 60 * 1000);
+ */

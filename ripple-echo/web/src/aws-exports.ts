@@ -16,8 +16,8 @@ const awsmobile = {
             "profile",
             "aws.cognito.signin.user.admin"
         ],
-        "redirectSignIn": "http://localhost:5173/",
-        "redirectSignOut": "http://localhost:5173/",
+        "redirectSignIn": "http://localhost:5173/,https://rippleecho.coauth.dev/",
+        "redirectSignOut": "http://localhost:5173/,https://rippleecho.coauth.dev/",
         "responseType": "code"
     },
     "federationTarget": "COGNITO_USER_POOLS",

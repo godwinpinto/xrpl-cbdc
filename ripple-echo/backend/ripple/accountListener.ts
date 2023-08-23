@@ -101,11 +101,11 @@ const pingpong = async () => {
 }
 
 
-setInterval(function () {
+/* setInterval(function () {
     pingpong()
     if (socket.readyState == socket.OPEN) {
         socket.close();
     }
 }, 60 * 1000);
-
+ */
 

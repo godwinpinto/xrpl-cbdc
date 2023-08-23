@@ -28,7 +28,7 @@ const processNotification = (event) => __awaiter(void 0, void 0, void 0, functio
             //        sendFcmNotification(event.data, devices[0])
             console.log("devices", devices);
             for (const device of devices) {
-                (0, sendWebNotification_1.sendWebNotification)(event.data, device.ORIGIN_ID);
+                (0, sendWebNotification_1.sendWebNotification)(event.data, device.CONTACT_ID, device.MSG_META_INFO);
                 /*             if(device.CONTACT_TYPE=="WEB"){
                     //web push
                     sendWebNotification(event.data);

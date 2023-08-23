@@ -2,27 +2,27 @@
 import type { UserInfo } from '@/stores/userStore';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia'
-import { onBeforeMount, ref } from "vue";
-import { registerUser } from '@/service/appServices.ts';
+import { ref } from "vue";
+import { registerUser } from '@/service/appServices';
 
 const userStore = useUserStore();
 
-const { userInfo, stepIndicator,registrationInput } = storeToRefs(userStore)
+const { userInfo, stepIndicator, registrationInput } = storeToRefs(userStore)
 
-const registerUserAction=async ()=>{
-    clearInterval(intervalDummy);    
-    const response=await  registerUser(registrationInput.value);
-    console.log("response",response)
-    if(response){
+const registerUserAction = async () => {
+    clearInterval(intervalDummy);
+    const response = await registerUser(registrationInput.value);
+    console.log("response", response)
+    if (response) {
         stepIndicator.value++
     }
 }
-const secTimer=ref(5)
-const intervalDummy=setInterval(function(){
+const secTimer = ref(5)
+const intervalDummy = setInterval(function () {
     secTimer.value--;
-},1000)
+}, 1000)
 
-setTimeout(registerUserAction,5000);
+setTimeout(registerUserAction, 5000);
 
 </script>
 <template>
@@ -59,15 +59,18 @@ setTimeout(registerUserAction,5000);
             class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
             required>
     </div>
-    <div class="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800" role="alert">
-  <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-  </svg>
-  <span class="sr-only">Info</span>
-  <div>
-    For Demo purpose, you don't need to scan. This page will register you and redirect in {{ secTimer }} seconds.
-  </div>
-</div>
+    <div class="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
+        role="alert">
+        <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor" viewBox="0 0 20 20">
+            <path
+                d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+        </svg>
+        <span class="sr-only">Info</span>
+        <div>
+            For Demo purpose, you don't need to scan. This page will register you and redirect in {{ secTimer }} seconds.
+        </div>
+    </div>
     <div class="flex justify-between">
         <button @click="stepIndicator--"
             class="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800">
@@ -90,8 +93,8 @@ setTimeout(registerUserAction,5000);
             Waiting for payment receipt
         </button>
 
-        
-</div>
-<div class="text-sm font-medium text-gray-500 dark:text-gray-400">
+
+    </div>
+    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
     Note: The page will automatically redirect once we receive 1XRP from you.
 </div></template>
