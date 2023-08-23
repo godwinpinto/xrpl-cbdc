@@ -2,7 +2,7 @@
 import type { UserInfo } from '@/stores/userStore';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia'
-import { onBeforeMount } from "vue";
+import { computed, onBeforeMount, ref } from "vue";
 
 const userStore = useUserStore();
 
@@ -12,6 +12,7 @@ const { signInWithGoogle, asyncSetUser } = useUserStore();
 onBeforeMount(() => {
     asyncSetUser();
 });
+
 </script>
 <template>
     <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
@@ -19,8 +20,7 @@ onBeforeMount(() => {
     </h2>
     <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
         Echo Box is a product by Ripple Echo (Hackathon Submission), that helps users receive notifications to transactions
-        taking place on their XRPL
-        accounts
+        taking place on their XRPL accounts
     </div>
 
     <div class="flex justify-center items-center">

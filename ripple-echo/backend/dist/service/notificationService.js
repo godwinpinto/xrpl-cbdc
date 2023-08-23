@@ -92,13 +92,15 @@ const getAccountDetails = (origin_id) => __awaiter(void 0, void 0, void 0, funct
         const transactions = result3.result.transactions;
         const transactionsOutput = new Array();
         for (let i = 0; i < transactions.length; i++) {
+            console.log(transactions[i]);
             const from = jsonpath_1.default.query(transactions[i], '$.tx.Account')[0];
             const amount = (0, xrpl_1.dropsToXrp)(jsonpath_1.default.query(transactions[i], '$.tx.Amount')[0]);
             const date = jsonpath_1.default.query(transactions[i], '$.tx.date')[0];
-            var d = new Date(0);
-            d.setUTCSeconds(date);
+            //            console.log(946684800+parseInt(date))
+            /*             var d = new Date(0);
+                        d.setUTCSeconds(946684800+parseInt(date)); */
             transactionsOutput.push({
-                from, amount, date: d.toUTCString()
+                from, amount, date: 946684800 + parseInt(date)
             });
         }
         const response = {

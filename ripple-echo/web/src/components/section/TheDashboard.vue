@@ -2,7 +2,7 @@
 import type { UserInfo } from '@/stores/userStore';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia'
-import { ref, inject } from "vue";
+import { ref, inject, computed } from "vue";
 import { fetchTransactions } from '@/service/appServices';
 
 const userStore = useUserStore();
@@ -54,6 +54,29 @@ const fetchBalanceAndTransactions = async () => {
         transactionsArray.value = response.data.response.data.result.txn as Array<ITransactions>;
     }
 }
+
+const configDateFormat:Intl.DateTimeFormatOptions={
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+    weekday:'short',
+  };
+
+const formatTransactions = computed(() => {
+    return transactionsArray.value.map((val) => {
+        var d = new Date(0);
+        d.setUTCSeconds(parseInt("" + val.date));
+        return {
+            from: val.from, amount: val.amount, date: d.toLocaleString('en-US',configDateFormat)
+        };
+
+    });
+});
+
 
 const playSoungTest = () => {
     speak("Welcome to Echo Box!", "en-UK");
@@ -125,12 +148,12 @@ fetchBalanceAndTransactions();
 
     </div>
     <div class="pt-4 min-h-96" id="about" role="tabpanel" aria-labelledby="about-tab">
-        <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700" v-for="(txn, index) in transactionsArray">
+        <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700" v-for="(txn, index) in formatTransactions">
             <li class="py-3 sm:py-4">
                 <div class="flex items-center space-x-4">
                     <div
                         class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
-                        <span class="font-medium text-gray-600 dark:text-gray-300">{{ index }}</span>
+                        <span class="font-medium text-gray-600 dark:text-gray-300">{{ index+1 }}</span>
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="font-medium text-gray-900 truncate dark:text-white">
