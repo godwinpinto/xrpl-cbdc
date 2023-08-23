@@ -45,7 +45,7 @@ export const getLast10Transactions = async (walletAddress: string): Promise<any 
             "ledger_index_min": -1,
             "ledger_index_max": -1,
             "binary": false,
-            "limit": 5,
+            "limit": 10,
             "forward": false
         }
         const history_result = await client.request(command);

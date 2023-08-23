@@ -44,3 +44,15 @@ export const fetchTransactions = async (origin_id:any):Promise<any> => {
         return null
     }
 }
+
+
+export const verifyAccountNo = async (account_no:any):Promise<any> => {
+    try {
+        const response = await axios.post(SERVER_URL+"/notification/verify-account",{account_no:account_no},headersVal);
+        console.log("responseresponse",response)
+        return response
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return null
+    }
+}

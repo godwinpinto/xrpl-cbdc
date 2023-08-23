@@ -2,8 +2,9 @@
 import type { UserInfo } from '@/stores/userStore';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia'
-import { ref, inject, computed } from "vue";
+import { ref, inject, computed, onMounted } from "vue";
 import { fetchTransactions } from '@/service/appServices';
+import echoAudio from '@/assets/echo.mp3';
 
 const userStore = useUserStore();
 
@@ -29,33 +30,43 @@ channel.bind(userInfo.value.email, function (data: any) {
     console.log("data", data);
     const parseInfo: any = JSON.parse(data.meta)
     console.log("data", parseInfo.sound, parseInfo.lang);
-    fetchBalanceAndTransactions();
+    fetchBalanceAndTransactions(true);
     if (parseInfo.sound == false)
         return
     if (parseInfo.lang == "en") {
-        speak("You received " + data.message + " XRP on Echo Box", "en-UK");
+        speakStart("You received " + data.message + " XRP on Echo Box", "en-UK");
     } else if (parseInfo.lang == "sp") {
-        speak("Recibiste " + data.message + " XRP en Echo Box", "es-ES");
+        speakStart("Recibiste " + data.message + " XRP en Echo Box", "es-ES");
     } else if (parseInfo.lang == "fr") {
-        speak("Vous avez reçu " + data.message + " XRP sur  Echo Box", "fr-FR");
+        speakStart("Vous avez reçu " + data.message + " XRP sur  Echo Box", "fr-FR");
     } else if (parseInfo.lang == "hi") {
-        speak("Echo Box per, " + data.message + " XRP praapth hue", "hi-IN");
+        speakStart("Echo Box per, " + data.message + " XRP praapth hue", "hi-IN");
     } else {
-        speak("You received " + data.message + " XRP on Echo Box", "en-UK");
+        speakStart("You received " + data.message + " XRP on Echo Box", "en-UK");
     }
 });
 
 
-const fetchBalanceAndTransactions = async () => {
-    const response = await fetchTransactions(userInfo.value.email);
-    if (response.status == 200 && response.data.response.data && response.data.response.data.result) {
-        balance.value = response.data.response.data.result.balance;
-        account.value = response.data.response.data.result.account;
-        transactionsArray.value = response.data.response.data.result.txn as Array<ITransactions>;
+const fetchBalanceAndTransactions = async (calledFromNotification: boolean) => {
+    if (calledFromNotification) {
+        refresh.value = true;
+    } else {
+        refresh.value = false;
     }
+    try {
+        const response = await fetchTransactions(userInfo.value.email);
+        if (response.status == 200 && response.data.response.data && response.data.response.data.result) {
+            balance.value = response.data.response.data.result.balance;
+            account.value = response.data.response.data.result.account;
+            transactionsArray.value = response.data.response.data.result.txn as Array<ITransactions>;
+        }
+    } catch (error) {
+
+    }
+    refresh.value = false;
 }
 
-const configDateFormat:Intl.DateTimeFormatOptions={
+const configDateFormat: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'short',
     day: '2-digit',
@@ -63,23 +74,40 @@ const configDateFormat:Intl.DateTimeFormatOptions={
     minute: '2-digit',
     second: '2-digit',
     hour12: true,
-    weekday:'short',
-  };
+    weekday: 'short',
+};
 
 const formatTransactions = computed(() => {
     return transactionsArray.value.map((val) => {
         var d = new Date(0);
         d.setUTCSeconds(parseInt("" + val.date));
         return {
-            from: val.from, amount: val.amount, date: d.toLocaleString('en-US',configDateFormat)
+            from: val.from, amount: val.amount, date: d.toLocaleString('en-US', configDateFormat)
         };
 
     });
 });
 
+const refresh = ref(false)
+const audio: HTMLAudioElement = new Audio(echoAudio);
+
+audio.addEventListener('ended', () => {
+    console.log('Audio playback completed');
+    speak(speakMessage.value, speakLang.value);
+});
+
+const speakStart = (message: string, lang: string) => {
+    audio.play();
+    speakMessage.value = message;
+    speakLang.value = lang;
+
+}
+
+const speakMessage = ref('')
+const speakLang = ref('')
 
 const playSoungTest = () => {
-    speak("Welcome to Echo Box!", "en-UK");
+    speakStart("Welcome to Echo Box!", "en-UK");
 }
 
 let synth = window.speechSynthesis;
@@ -88,7 +116,7 @@ let greetingSpeech = new window.SpeechSynthesisUtterance()
 function speak(text: string, lang: String) {
 
     const voice = synth.getVoices().filter(x => x.lang == lang);
-    console.log(text)
+    console.log(text, lang)
     console.log(synth.getVoices())
     greetingSpeech.voice = voice[0]
     greetingSpeech.text = text
@@ -97,23 +125,37 @@ function speak(text: string, lang: String) {
     synth.speak(greetingSpeech)
 
 }
-fetchBalanceAndTransactions();
+onMounted(() => {
+    fetchBalanceAndTransactions(false);
+})
+const arraySkeleton = [0, 0, 0, 0];
 </script>
 <template>
+    <div v-if="refresh" class="indeterminate-progress-bar">
+        <div class="indeterminate-progress-bar__progress bg-yellow-300 dark:text-gray-600 "></div>
+    </div>
     <div class="w-full mt-4 xl:grid-cols-2 2xl:grid-cols-3">
         <div
             class="items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex dark:border-gray-700 sm:p-6 dark:bg-gray-800">
-            <div class="w-full flex justify-between">
+            <div class="w-full">
                 <div>
                     <h3 class="text-base font-normal text-gray-500 dark:text-gray-400">Your account balance</h3>
-                    <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">XRP {{ balance
-                    }}</span>
+                    <span v-if="account != ''"
+                        class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl dark:text-white">XRP {{ balance
+                        }}</span>
+
+                    <div class="w-1/2 animate-pulse py-2" v-if="account == ''">
+                        <div class="h-10 bg-gray-200 rounded-full dark:bg-gray-700 w-80"></div>
+                    </div>
                     <p class="flex items-center text-base font-normal text-gray-500 dark:text-gray-400">
                         <span class="flex items-center mr-1.5 text-sm text-green-500 dark:text-green-400">
-                            {{ account }}
+                            {{ account }}<div class="w-1/2 animate-pulse py-2" v-if="account == ''">
+                                <div class="h-4 bg-gray-200 rounded-full dark:bg-gray-700 w-80"></div>
+                            </div>
                         </span>
                     </p>
                 </div>
+
             </div>
         </div>
     </div>
@@ -138,6 +180,9 @@ fetchBalanceAndTransactions();
                 Sound / Speaker Test
             </span>
         </button>
+        <button type="button" @click="fetchBalanceAndTransactions(true)"
+            class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">Reload Page</button>
+
         <button @click="signOut"
             class="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-red-200 via-red-300 to-yellow-200 group-hover:from-red-200 group-hover:via-red-300 group-hover:to-yellow-200 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-red-100 dark:focus:ring-red-400">
             <span
@@ -147,13 +192,36 @@ fetchBalanceAndTransactions();
         </button>
 
     </div>
-    <div class="pt-4 min-h-96" id="about" role="tabpanel" aria-labelledby="about-tab">
-        <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700" v-for="(txn, index) in formatTransactions">
-            <li class="py-3 sm:py-4">
+    <div class="min-h-72 h-80 overflow-y-scroll pr-4" id="about" v-if="account == ''">
+        <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700 animate-pulse">
+            <li class="py-3 sm:py-4" v-for="(val, index) in arraySkeleton">
                 <div class="flex items-center space-x-4">
                     <div
                         class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
-                        <span class="font-medium text-gray-600 dark:text-gray-300">{{ index+1 }}</span>
+                        <span class="font-medium text-gray-600 dark:text-gray-300"></span>
+                    </div>
+                    <div class="flex-1 min-w-10">
+                        <div class="bg-gray-200 rounded-full dark:bg-gray-700  h-4 w-40 mb-2">
+                        </div>
+                        <div class="bg-gray-200 rounded-full dark:bg-gray-700  h-4 w-72">
+                        </div>
+                    </div>
+                    <div class="inline-flex items-center bg-gray-200 rounded-full dark:bg-gray-700 h-8 w-20">
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="min-h-72 h-80 overflow-y-scroll pr-4" id="about" role="tabpanel" aria-labelledby="about-tab"
+        v-if="account != ''">
+        <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700" v-auto-animate>
+            <li class="py-3 sm:py-4" v-for="(txn, index) in formatTransactions" :key="txn.date">
+                <div class="flex items-center space-x-4">
+                    <div
+                        class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+                        <span class="font-medium text-gray-600 dark:text-gray-300">{{ index + 1 }}</span>
                     </div>
                     <div class="flex-1 min-w-0">
                         <p class="font-medium text-gray-900 truncate dark:text-white">
@@ -171,4 +239,33 @@ fetchBalanceAndTransactions();
         </ul>
     </div>
 </template>
+<style>
+.indeterminate-progress-bar {
+    border-radius: 9999px;
+    height: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.indeterminate-progress-bar__progress {
+    border-radius: 9999px;
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    width: 70%;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-name: indeterminate-progress-bar;
+}
+
+@keyframes indeterminate-progress-bar {
+    from {
+        left: -50%;
+    }
+
+    to {
+        left: 100%;
+    }
+}
+</style>
     

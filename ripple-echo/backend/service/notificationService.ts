@@ -31,6 +31,20 @@ export const validateLogin = async (origin_id: string): Promise<boolean> => {
     }
 }
 
+export const verifyAccountService = async (account_no: string): Promise<boolean> => {
+    try {
+        const result = await walletBalance(account_no);
+        if(result){
+            return true
+        }else{
+            return false
+        }
+    } catch (e: any) {
+        console.log("here")
+        throw new Error(e.message || "Unknown error")
+    }
+}
+
 export const registerChannel = async (registerNotificationInput: RegisterNotificationInput): Promise<number> => {
     try {
 

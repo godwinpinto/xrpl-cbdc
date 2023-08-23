@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteChannel = exports.getAccountDetails = exports.registerChannel = exports.validateLogin = void 0;
+exports.deleteChannel = exports.getAccountDetails = exports.registerChannel = exports.verifyAccountService = exports.validateLogin = void 0;
 const notificationRepository_1 = require("../repository/notificationRepository");
 const walletUtils_1 = require("../ripple/walletUtils");
 const constants_1 = require("../utils/constants");
@@ -41,6 +41,22 @@ const validateLogin = (origin_id) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.validateLogin = validateLogin;
+const verifyAccountService = (account_no) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield (0, walletUtils_1.walletBalance)(account_no);
+        if (result) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    catch (e) {
+        console.log("here");
+        throw new Error(e.message || "Unknown error");
+    }
+});
+exports.verifyAccountService = verifyAccountService;
 const registerChannel = (registerNotificationInput) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const fetchResults = yield (0, notificationRepository_1.fetchAccountsByDeviceId)(registerNotificationInput.origin_id);

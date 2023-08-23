@@ -4,7 +4,7 @@ import { GenericResponse } from '../exception/responseJson';
 import { PixResponse } from '../ripple/commonInterfaces';
 import { admin } from '../utils/firebaseConfig'
 import { RegisterNotificationInput } from '../utils/constants';
-import { deleteChannel, getAccountDetails, registerChannel, validateLogin } from '../service/notificationService';
+import { deleteChannel, getAccountDetails, registerChannel, validateLogin, verifyAccountService } from '../service/notificationService';
 
 
 const router = express.Router();
@@ -64,6 +64,24 @@ router.post('/dashboard', async (req: Request, res: Response) => {
     }
     res.json({ response });
 });
+
+router.post('/verify-account', async (req: Request, res: Response) => {
+
+    const response:GenericResponse={}
+    const { account_no } = req.body
+    try{
+        const result=await verifyAccountService(account_no);
+        response.status=200
+        response.data={
+            result
+        }
+    }catch(e:any){
+        response.status=300
+        response.msg=e.message || "Unknown error"
+    }
+    res.json({ response });
+});
+
 
 router.post('/delete', async (req: Request, res: Response) => {
     const response:GenericResponse={}

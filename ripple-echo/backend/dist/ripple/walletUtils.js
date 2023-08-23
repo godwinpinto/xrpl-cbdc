@@ -53,7 +53,7 @@ const getLast10Transactions = (walletAddress) => __awaiter(void 0, void 0, void 
             "ledger_index_min": -1,
             "ledger_index_max": -1,
             "binary": false,
-            "limit": 5,
+            "limit": 10,
             "forward": false
         };
         const history_result = yield client.request(command);

@@ -13,11 +13,12 @@
   },
   "dependencies": {
     "@aws-amplify/ui-vue": "^3.1.25",
+    "@formkit/auto-animate": "^0.7.0",
     "aws-amplify": "5.3.5",
     "axios": "^1.4.0",
     "flowbite": "^1.8.1",
-    "pusher-js": "^8.3.0",
     "pinia": "^2.1.4",
+    "pusher-js": "^8.3.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4"
   },
