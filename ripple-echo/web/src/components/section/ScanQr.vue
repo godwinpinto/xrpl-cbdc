@@ -1,29 +1,35 @@
 <script setup lang="ts">
-import type { UserInfo } from '@/stores/userStore';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia'
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { registerUser } from '@/service/appServices';
 
 const userStore = useUserStore();
-
-const { userInfo, stepIndicator, registrationInput } = storeToRefs(userStore)
+const { stepIndicator, registrationInput } = storeToRefs(userStore)
+const secTimer = ref(10)
+let timeout:NodeJS.Timeout
 
 const registerUserAction = async () => {
     clearInterval(intervalDummy);
     const response = await registerUser(registrationInput.value);
-    console.log("response", response)
     if (response) {
         stepIndicator.value++
     }
 }
-const secTimer = ref(5)
+
 const intervalDummy = setInterval(function () {
     secTimer.value--;
 }, 1000)
 
-setTimeout(registerUserAction, 5000);
+onMounted(()=>{
+    timeout=setTimeout(registerUserAction, 10 * 1000);
+})
 
+onUnmounted(()=>{
+    if(timeout){
+        clearTimeout(timeout)
+    }
+})
 </script>
 <template>
     <div class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800"
@@ -39,10 +45,9 @@ setTimeout(registerUserAction, 5000);
         </div>
     </div>
     <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
-        Please scan the below QR using XUMM app or copy below account and transfer exact 1 XRP (in one transaction) to
+        Please scan the below QR using XUMM app (or copy below account) and transfer exact 1 XRP (in one transaction) to
         verify that you own the account.
     </div>
-
     <div class="flex items-center justify-center">
         <div class="w-1/2">
             <figure class="max-w-lg">
@@ -96,5 +101,6 @@ setTimeout(registerUserAction, 5000);
 
     </div>
     <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
-    Note: The page will automatically redirect once we receive 1XRP from you.
-</div></template>
+        Note: The page will automatically redirect once we receive 1 XRP from you.
+    </div>
+</template>

@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import type { UserInfo } from '@/stores/userStore';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia'
-import { onBeforeMount, ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const userStore = useUserStore();
-
-const { userInfo, stepIndicator, registrationInput } = storeToRefs(userStore)
-
+const { stepIndicator } = storeToRefs(userStore)
 const secTimer = ref(10)
+
 const intervalDummy = setInterval(function () {
     secTimer.value--;
 }, 1000);
 
-setTimeout(function () {
-    clearInterval(intervalDummy);
-    stepIndicator.value++;
-}, 10000);
+onMounted(() => {
+    setTimeout(function () {
+        clearInterval(intervalDummy);
+        stepIndicator.value++;
+    }, 10000);
+})
 </script>
 <template>
     <div class="flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800"
@@ -32,7 +32,7 @@ setTimeout(function () {
         </div>
     </div>
     <div class="flex justify-center">
-        <button disabled type="button" 
+        <button disabled type="button"
             class="text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 inline-flex items-center">
             <svg aria-hidden="true" role="status" class="inline w-4 h-4 mr-3 text-white animate-spin" viewBox="0 0 100 101"
                 fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -45,7 +45,5 @@ setTimeout(function () {
             </svg>
             Thank you. Kindly wait while we redirect you in {{ secTimer }} seconds.
         </button>
-
-
     </div>
 </template>

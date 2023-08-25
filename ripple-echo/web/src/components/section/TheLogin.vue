@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import type { UserInfo } from '@/stores/userStore';
 import { useUserStore } from '@/stores/userStore';
-import { storeToRefs } from 'pinia'
-import { computed, onBeforeMount, ref } from "vue";
+import { onBeforeMount } from "vue";
 
 const userStore = useUserStore();
-
-const { userInfo } = storeToRefs(userStore)
 const { signInWithGoogle, asyncSetUser } = useUserStore();
 
 onBeforeMount(() => {

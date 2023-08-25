@@ -1,36 +1,30 @@
 <script setup lang="ts">
 import { verifyAccountNo } from '@/service/appServices';
-import type { UserInfo } from '@/stores/userStore';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia'
-import { onBeforeMount, ref } from "vue";
+import { ref } from "vue";
 
 const userStore = useUserStore();
-
 const { signOut } = useUserStore();
-
 const loading = ref(false);
-
-const { userInfo, stepIndicator, registrationInput } = storeToRefs(userStore)
-
+const { stepIndicator, registrationInput } = storeToRefs(userStore)
 const xrpl_ac_no_error = ref(false);
+const xrpl_ac_no_error_exists = ref(false);
 
-const xrpl_ac_no_error_exists=ref(false);
 const goToNextPage = async () => {
     loading.value = true
-    xrpl_ac_no_error_exists.value=false;
+    xrpl_ac_no_error_exists.value = false;
     try {
         if (registrationInput.value.account_no == "" || !registrationInput.value.account_no.startsWith("r") || registrationInput.value.account_no.length < 15) {
             xrpl_ac_no_error.value = true;
         } else {
             const response = await verifyAccountNo(registrationInput.value.account_no);
-            console.log("response for validation", response)
-            const body=response.data.response;
+            const body = response.data.response;
             if (body.status == 200 && body.data.result && body.data.result == true) {
                 xrpl_ac_no_error.value = false;
                 stepIndicator.value++
             } else {
-                xrpl_ac_no_error_exists.value=true;
+                xrpl_ac_no_error_exists.value = true;
                 xrpl_ac_no_error.value = false;
             }
         }
@@ -39,7 +33,6 @@ const goToNextPage = async () => {
     }
     loading.value = false
 }
-
 </script>
 <template>
     <div>
@@ -56,7 +49,8 @@ const goToNextPage = async () => {
             class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
             required>
         <p class="mt-2 text-sm text-red-600 dark:text-red-500" v-if="xrpl_ac_no_error">Enter a valid XRPL account number</p>
-        <p class="mt-2 text-sm text-red-600 dark:text-red-500" v-if="xrpl_ac_no_error_exists">Enter a valid XRPL account that exists on the ledger</p>
+        <p class="mt-2 text-sm text-red-600 dark:text-red-500" v-if="xrpl_ac_no_error_exists">Enter a valid XRPL account
+            that exists on the ledger</p>
     </div>
     <div>
         <h3 class="mb-4 font-medium text-sm text-gray-900 dark:text-white">Notification configuration</h3>
@@ -134,6 +128,5 @@ const goToNextPage = async () => {
             </svg>
             Continue
         </button>
-
     </div>
 </template>
